@@ -39,8 +39,7 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
       vb.customize ["modifyvm", :id, "--vram", "128"]
       vb.customize ["modifyvm", :id, "--description", "
-EIS Training Platform based on Kali Rolling (2018.3) x64
-2018-08-21
+EIS Training Platform based on Kali Rolling x64
 - - - - - - - - - - - - - - - - - -
 Minimal Requirements: VT-X enabled BIOS, multicore 64-bit processor, 4 GB RAM, 80 GB Free Disk Space
 Helpful: 8 GB RAM, SSD hard-drive
