@@ -3,6 +3,13 @@
 
 # Documentation: https://www.vagrantup.com/docs/vagrantfile/machine_settings.html
 
+# Patch for issue https://github.com/hashicorp/vagrant/issues/8878
+class VagrantPlugins::ProviderVirtualBox::Action::Network
+  def dhcp_server_matches_config?(dhcp_server, config)
+    true
+  end
+end
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -16,7 +23,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "kalilinux/rolling"
 
   # Create a private network, which allows host-only access to the machine
-    config.vm.network "private_network", :type => 'dhcp', :name => 'vboxnet0', :adapter => 2
+    config.vm.network "private_network", :type => 'dhcp', :adapter => 2
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -36,7 +43,7 @@ Vagrant.configure("2") do |config|
       vb.name = "EIS-Kali-Training-Platform-64bit-1.0.10"
 
       # Find settings with VBoxManage showvminfo <vmname> or https://www.virtualbox.org/manual/ch08.html under section for modifyvm
-      vb.customize ["modifyvm", :id, "--clipboard-mode", "bidirectional"]
+      vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
       vb.customize ["modifyvm", :id, "--vram", "128"]
       vb.customize ["modifyvm", :id, "--description", "
 EIS Training Platform based on Kali Rolling x64
