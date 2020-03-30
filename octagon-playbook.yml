@@ -1,0 +1,5 @@
+- hosts: all
+  tasks:
+  - name: Change root password to mutillidae
+    user: name=root update_password=always password=$6$rounds=656000$SWj/fYk2FUFy0dzf$XdmB7IPjkC1V/UGKkpXcxXKhTJU2nfH3sZB7ppDvUx71pMemnJ/lrsGJYYvg.SaguGs15o7bPM6O2yz2ICflU.
+    become: yes
