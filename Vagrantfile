@@ -23,13 +23,13 @@ Vagrant.configure("2") do |config|
   config.vm.box = "kalilinux/rolling"
 
   # Create a private network, which allows host-only access to the machine
-    config.vm.network "private_network", :type => 'dhcp', :adapter => 2
+  config.vm.network :private_network, :type => 'dhcp', :adapter => 2
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "./tmp", "/mnt/vagrant_data"
+  config.vm.synced_folder "./tmp", "/mnt/vagrant_data"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -70,11 +70,4 @@ https://www.youtube.com/user/webpwnized"]
     ansible.playbook = "octagon-playbook.yml"
   end
 
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
 end
