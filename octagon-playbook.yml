@@ -1,5 +1,101 @@
+# Test Command: ansible-playbook --user=vagrant --ask-pass --inventory-file=octagon-hosts.yml octagon-playbook.yml
+
 - hosts: all
+  become: true
+  vars:
+    files_dir: files/
+    ssl_certs_dir: /etc/ssl/certs/
+    ssl_private_key_dir: /etc/ssl/private/
+  vars_files:
+    - vars/octagon-variables.yml
+
   tasks:
-  - name: Change root password to mutillidae
-    user: name=root update_password=always password=$6$rounds=656000$SWj/fYk2FUFy0dzf$XdmB7IPjkC1V/UGKkpXcxXKhTJU2nfH3sZB7ppDvUx71pMemnJ/lrsGJYYvg.SaguGs15o7bPM6O2yz2ICflU.
-    become: yes
+  - name: Change Linux root password to mutillidae
+    user: name=root update_password=always password={{ linux_password }}
+
+  - name: Add mutillidae.local domain to /etc/hosts
+    lineinfile:
+      path: /etc/hosts
+      regexp: '^127.0.0.1'
+      line: '127.0.0.1	{{ website_domain_name }} {{ website_domain_aliases }}'
+
+  - name: Install aptitude for ansible to use
+    apt: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+    loop: [ 'aptitude' ]
+
+  - name: Install LAMP Packages
+    apt: name={{ item }} update_cache=yes state=latest
+    loop: [ 'apache2', 'mariadb-server', 'php', 'php-mysql', 'libapache2-mod-php', 'php-curl', 'php-mbstring', 'php-xml' ]
+
+  #Install Mutillidae
+  - name: Clone Mutillidae from GitHub
+    git:
+      repo: "{{ mutillidae_git_repo }}"
+      dest: '/var/www/{{ website_name }}'
+      update: yes
+      force: yes
+
+  #Apache Configuration
+  - name: make sure SSL certificate is existing and secured
+    copy:
+      src:    '{{ item.src }}'
+      dest:   '{{ item.dest }}'
+      owner:  root
+      group:  root
+      mode:   '{{ item.mode }}'
+    with_items:
+      - src:  '{{ files_dir }}{{ ssl_certificate }}'
+        dest: '{{ ssl_certs_dir }}{{ ssl_certificate }}'
+        mode: '0644'
+      - src:  '{{ files_dir }}{{ ssl_private_key }}'
+        dest: '{{ ssl_private_key_dir }}{{ ssl_private_key }}'
+        mode: '0600'
+
+  - name: Set up Apache virtualhost
+    template:
+      src: "files/apache.conf.j2"
+      dest: "/etc/apache2/sites-available/{{ http_conf }}"
+      notify: Reload Apache
+
+  - name: Enable new site
+    shell: /usr/sbin/a2ensite {{ http_conf }}
+    notify: Reload Apache
+
+  - name: Disable default Apache site
+    shell: /usr/sbin/a2dissite 000-default.conf
+    when: disable_default
+    notify: Reload Apache
+
+  # MySQL Configuration
+  - name: Sets the root password
+    mysql_user:
+      name: root
+      password: "{{ mysql_root_password }}"
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Removes all anonymous user accounts
+    mysql_user:
+      name: ''
+      host_all: yes
+      state: absent
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+
+  - name: Removes the MySQL test database
+    mysql_db:
+      name: test
+      state: absent
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+
+  handlers:
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
+
