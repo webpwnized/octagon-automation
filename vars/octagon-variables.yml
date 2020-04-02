@@ -1,1 +1,16 @@
-Init
+linux_password: $6$rounds=656000$SWj/fYk2FUFy0dzf$XdmB7IPjkC1V/UGKkpXcxXKhTJU2nfH3sZB7ppDvUx71pMemnJ/lrsGJYYvg.SaguGs15o7bPM6O2yz2ICflU.
+
+mutillidae_git_repo: "https://github.com/webpwnized/mutillidae.git"
+
+app_user: "mutillidae"
+website_name: "mutillidae"
+website_domain_name: "mutillidae.local"
+website_domain_aliases: "www.mutillidae.local mutillidae.com www.mutillidae.com mutillidae.org www.mutillidae.org mutillidae"
+http_conf: "apache-mutillidae.conf.j2"
+http_port: "80"
+https_port: "443"
+disable_default: true
+ssl_certificate: "mutillidae-selfsigned.crt"
+ssl_private_key: "mutillidae-selfsigned.key"
+
+mysql_root_password: "mutillidae"
