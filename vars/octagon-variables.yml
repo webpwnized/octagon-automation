@@ -1,6 +1,7 @@
-ansible_python_interpreter: 'python3'
-
 linux_password: $6$rounds=656000$SWj/fYk2FUFy0dzf$XdmB7IPjkC1V/UGKkpXcxXKhTJU2nfH3sZB7ppDvUx71pMemnJ/lrsGJYYvg.SaguGs15o7bPM6O2yz2ICflU.
+www_path: '/var/www/'
+ssl_certs_dir: /etc/ssl/certs/
+ssl_private_key_dir: /etc/ssl/private/
 
 mutillidae_git_repo: 'https://github.com/webpwnized/mutillidae.git'
 
