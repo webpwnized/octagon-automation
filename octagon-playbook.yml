@@ -109,8 +109,7 @@
   # GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'mutillidae';
   - name: Set MariaDB root
     mysql_user:
-      login_user: root
-      login_password: "{{ mariadb_root_password }}"
+      login_unix_socket: '/var/run/mysqld/mysqld.sock'
       user: root
       check_implicit_admin: true
       password: "{{ mariadb_root_password }}"
