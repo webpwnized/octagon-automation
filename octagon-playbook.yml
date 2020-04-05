@@ -4,10 +4,10 @@
   become: true
   vars:
     files_dir: files/
-    ssl_certs_dir: /etc/ssl/certs/
-    ssl_private_key_dir: /etc/ssl/private/
-  vars_files:
+  vars_files: 
     - vars/octagon-variables.yml
+  environment:
+    ansible_python_interpreter: '/usr/bin/python3'
 
   tasks:
   - name: Change Linux root password to mutillidae
@@ -22,19 +22,20 @@
       regexp: '^127.0.0.1'
       line: '127.0.0.1	{{ website_domain_name }} {{ website_domain_aliases }}'
 
+  - name: Update APT cache
+    apt: 
+      update_cache: yes
+
   - name: Install aptitude for ansible to use
     apt: 
       name: 'aptitude'
-      update_cache: yes
       state: latest
       force_apt_get: yes
  
-  - name: Install LAMP Packages
+  - name: Install Packages
     apt:
-      name: 'aptitude'
-      update_cache: yes
+      name: '{{ item }}'
       state: latest
-      force_apt_get: yes
     with_items:
       - 'apache2'
       - 'libapache2-mod-php'
@@ -48,8 +49,11 @@
       - 'php-mbstring'
       - 'php-xml'
       - 'python3-pip'
+      - 'python3-setuptools'
+      - 'python3-virtualenv'
       - 'python3-dev'
       - 'python3-mysqldb'
+      - 'python3-pymysql'
 
   - name: Remove JavaScript-Common package
     apt:
@@ -64,18 +68,11 @@
     apt:
       autoremove: yes
 
-  - name: Install pip and PyMySQL
-    pip:
-      name: '{{ item }}'
-    with_items:
-      - pip
-      - PyMySQL
-
   #Install Mutillidae
   - name: Clone Mutillidae from GitHub
     git:
       repo: '{{ mutillidae_git_repo }}'
-      dest: '/var/www/{{ website_name }}'
+      dest: '{{ www_path }}{{ website_name }}'
       update: yes
       force: yes
 
@@ -114,7 +111,7 @@
   - name: Disable default Apache site
     shell: '{{ a2dissite }} 000-default.conf'
     when: disable_default
-    notify: Reload Apache
+    notify: Restart Apache
 
   # MySQL Configuration
   - name: Start MariaDB
