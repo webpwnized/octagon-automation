@@ -3,8 +3,8 @@
     <VirtualHost 127.0.0.1:80>
         ServerName mutillidae.local
     	ServerAlias www.mutillidae.local mutillidae.com www.mutillidae.com mutillidae.org www.mutillidae.org mutillidae
-        DocumentRoot /var/www/mutillidae
-	<Directory /var/www/mutillidae>
+        DocumentRoot {{ www_path }}mutillidae
+	<Directory {{ www_path }}mutillidae>
                 AllowOverride All
                 Options -Indexes +FollowSymLinks +MultiViews
                 Require all granted
@@ -17,8 +17,8 @@
     <VirtualHost 127.0.0.1:443>
         ServerName mutillidae.local
     	ServerAlias www.mutillidae.local mutillidae.com www.mutillidae.com mutillidae.org www.mutillidae.org mutillidae
-        DocumentRoot /var/www/mutillidae
- 	<Directory /var/www/mutillidae>
+        DocumentRoot {{ www_path }}mutillidae
+ 	<Directory {{ www_path }}mutillidae>
                 AllowOverride All
                 Options -Indexes +FollowSymLinks +MultiViews
                 Require all granted
