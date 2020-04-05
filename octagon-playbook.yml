@@ -28,7 +28,7 @@
 
   - name: Install aptitude for ansible to use
     apt: 
-      name: 'aptitude'
+      name: ['aptitude', 'python-apt']
       state: latest
       force_apt_get: yes
  
@@ -112,12 +112,8 @@
       name: root
       password: '{{ mariadb_root_password }}'
       host_all: yes
-      login_user: root
-      login_password: '{{ mariadb_root_password }}'
       priv: '*.*:ALL,GRANT'
       state: present
-    notify:
-        - Restart MariaDB
 
   - name: Removes all anonymous user accounts
     mysql_user:

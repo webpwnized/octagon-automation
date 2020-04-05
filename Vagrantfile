@@ -68,6 +68,7 @@ https://www.youtube.com/user/webpwnized"]
   #
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "octagon-playbook.yml"
+    ansible.extra_vars = { ansible_python_interpreter:"/usr/bin/python3" }
   end
 
 end
