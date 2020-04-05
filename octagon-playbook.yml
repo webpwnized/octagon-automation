@@ -106,21 +106,16 @@
       name: mysql
       state: started
 
+  # GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'mutillidae';
   - name: Set MariaDB root password
     mysql_user:
       name: root
       password: '{{ mariadb_root_password }}'
-      host: '{{ item }}'
+      host_all: yes
       login_user: root
       login_password: '{{ mariadb_root_password }}'
       priv: '*.*:ALL,GRANT'
       state: present
-    with_items:
-      - ::1
-      - 127.0.0.1
-      - localhost
-      - mutillidae
-      - mutillidae.local
     notify:
         - Restart MariaDB
 
@@ -140,9 +135,12 @@
       login_password: '{{ mariadb_root_password }}'
 
 # Set up Mutillidae database
-  - name: Connect (GET) to the Mutillidae Set Up Database page
+  - name: Visit Mutillidae Database Set Up page
     uri:
       url: http://mutillidae.local/set-up-database.php
+      return_content: yes
+    register: this
+    failed_when: "'database' not in this.content"
 
   handlers:
     - name: Reload Apache
