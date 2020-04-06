@@ -64,7 +64,7 @@ https://www.youtube.com/user/webpwnized"]
   end
 
   #
-  # Run Ansible from the Vagrant Host
+  # Run Ansible from the Vagrant Host using Python3 interpreter
   #
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "octagon-playbook.yml"
