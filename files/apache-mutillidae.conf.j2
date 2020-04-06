@@ -1,35 +1,33 @@
-# Mutillidae
-    
-    <VirtualHost 127.0.0.1:80>
-        ServerName mutillidae.local
-    	ServerAlias www.mutillidae.local mutillidae.com www.mutillidae.com mutillidae.org www.mutillidae.org mutillidae
-        DocumentRoot {{ www_path }}mutillidae
-	<Directory {{ www_path }}mutillidae>
+    <VirtualHost {{ website_ip_address }}:{{ http_port }}>
+        ServerName {{ website_domain_name }}
+    	ServerAlias {{ website_domain_aliases }}
+        DocumentRoot {{ www_path }}{{ website_name }}
+	<Directory {{ www_path }}{{ website_name }}>
                 AllowOverride All
                 Options -Indexes +FollowSymLinks +MultiViews
                 Require all granted
 	</Directory>
 
-    	ErrorLog ${APACHE_LOG_DIR}/mutillidae-error.log
-    	CustomLog ${APACHE_LOG_DIR}/mutillidae-access.log combined
+    	ErrorLog ${APACHE_LOG_DIR}/{{ website_error_log }}
+    	CustomLog ${APACHE_LOG_DIR}/{{ website_access_log }} combined
     </VirtualHost>
     
-    <VirtualHost 127.0.0.1:443>
-        ServerName mutillidae.local
-    	ServerAlias www.mutillidae.local mutillidae.com www.mutillidae.com mutillidae.org www.mutillidae.org mutillidae
-        DocumentRoot {{ www_path }}mutillidae
- 	<Directory {{ www_path }}mutillidae>
+    <VirtualHost {{ website_ip_address }}:{{ https_port }}>
+        ServerName {{ website_domain_name }}
+    	ServerAlias {{ website_domain_aliases }}
+        DocumentRoot {{ www_path }}{{ website_name }}
+ 	<Directory {{ www_path }}{{ website_name }}>
                 AllowOverride All
                 Options -Indexes +FollowSymLinks +MultiViews
                 Require all granted
 	</Directory>
 
-    	ErrorLog ${APACHE_LOG_DIR}/mutillidae-error.log
-    	CustomLog ${APACHE_LOG_DIR}/mutillidae-access.log combined
+    	ErrorLog ${APACHE_LOG_DIR}/{{ website_error_log }}
+    	CustomLog ${APACHE_LOG_DIR}/{{ website_access_log }} combined
     
         SSLEngine On
         SSLOptions +StrictRequire
-        SSLCertificateFile /etc/ssl/certs/mutillidae-selfsigned.crt
-        SSLCertificateKeyFile /etc/ssl/private/mutillidae-selfsigned.key
+        SSLCertificateFile {{ ssl_certs_dir }}{{ ssl_certificate }}
+        SSLCertificateKeyFile {{ ssl_private_key_dir }}{{ ssl_private_key }}
         SSLProtocol +TLSv1 +TLSv1.1 +TLSv1.2
     </VirtualHost>
