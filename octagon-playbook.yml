@@ -6,7 +6,7 @@
     files_dir: files/
     apache_files_dir: '{{ files_dir }}apache/'
     ldap_files_dir: '{{ files_dir }}ldap/'
-    labs_files_dir: '{{ files_dir }}labs/'
+    lab_files_dir: '{{ files_dir }}labs/'
   vars_files: 
     - vars/octagon-variables.yml
   environment:
