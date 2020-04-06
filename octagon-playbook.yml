@@ -4,6 +4,9 @@
   become: true
   vars:
     files_dir: files/
+    apache_files_dir: '{{ files_dir }}apache/'
+    ldap_files_dir: '{{ files_dir }}ldap/'
+    labs_files_dir: '{{ files_dir }}labs/'
   vars_files: 
     - vars/octagon-variables.yml
   environment:
@@ -67,10 +70,10 @@
       group:  root
       mode:   '{{ item.mode }}'
     with_items:
-      - src:  '{{ files_dir }}{{ ssl_certificate }}'
+      - src:  '{{ apache_files_dir }}{{ ssl_certificate }}'
         dest: '{{ ssl_certs_dir }}{{ ssl_certificate }}'
         mode: '0644'
-      - src:  '{{ files_dir }}{{ ssl_private_key }}'
+      - src:  '{{ apache_files_dir }}{{ ssl_private_key }}'
         dest: '{{ ssl_private_key_dir }}{{ ssl_private_key }}'
         mode: '0600'
 
@@ -82,7 +85,7 @@
 
   - name: Set up Apache virtualhost
     template:
-      src: '{{ files_dir }}{{ http_conf }}.j2'
+      src: '{{ apache_files_dir }}{{ http_conf }}.j2'
       dest: '/etc/apache2/sites-available/{{ http_conf }}'
     notify: Reload Apache
 
@@ -123,6 +126,13 @@
       return_content: yes
     register: this
     failed_when: "'database' not in this.content"
+
+# Copy over the lab files
+  - name: Copy the lab files into the Documents folder
+    copy:
+      src: '{{ lab_files_dir }}'
+      dest: '/root/Documents'
+      mode: '0755'
 
   handlers:
     - name: Reload Apache
