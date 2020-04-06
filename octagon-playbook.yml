@@ -111,8 +111,8 @@
     mysql_user:
       login_unix_socket: '/var/run/mysqld/mysqld.sock'
       user: root
-      check_implicit_admin: true
       password: "{{ mariadb_root_password }}"
+      check_implicit_admin: true
       host_all: yes
       priv: '*.*:ALL,GRANT'
 
