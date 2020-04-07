@@ -7,6 +7,7 @@
     apache_files_dir: '{{ files_dir }}apache/'
     ldap_files_dir: '{{ files_dir }}ldap/'
     lab_files_dir: '{{ files_dir }}labs/'
+    mariadb_files_dir: '{{ files_dir }}mariadb/'
   vars_files: 
     - vars/octagon-variables.yml
   environment:
@@ -108,18 +109,28 @@
     service: 
       name: mysql
       state: started
+      enabled: yes
+
+  - name: Create /root/.my.cnf  with root password credentials
+    template:
+      src:  '{{ mariadb_files_dir }}my.cnf.j2'
+      dest: '/root/.my.cnf'
+      owner: root
+      mode: 0600
+    notify: Restart MariaDB
 
   # GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'mutillidae';
   - name: Set MariaDB root
     mysql_user:
+      name: root
       login_unix_socket: '/var/run/mysqld/mysqld.sock'
       user: root
-      password: "{{ mariadb_root_password }}"
-      check_implicit_admin: true
+      password: '{{ mariadb_root_password }}'
       host_all: yes
       priv: '*.*:ALL,GRANT'
+      check_implicit_admin: true
 
-# Set up Mutillidae database
+  # Set up Mutillidae database
   - name: Visit Mutillidae Database Set Up page
     uri:
       url: http://mutillidae.local/set-up-database.php
