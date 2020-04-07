@@ -158,6 +158,6 @@
 
     - name: Restart MariaDB
       service:
-        name: mariadb
+        name: mysql
         state: restarted
 
