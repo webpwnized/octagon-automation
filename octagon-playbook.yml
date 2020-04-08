@@ -9,7 +9,11 @@
     lab_files_dir: '{{ files_dir }}labs/'
     mariadb_files_dir: '{{ files_dir }}mariadb/'
   vars_files: 
-    - vars/octagon-variables.yml
+    - vars/kali-variables.yml
+    - vars/apache-variables.yml
+    - vars/mutillidae-variables.yml
+    - vars/mariadb-variables.yml
+    - vars/openldap-variables.yml
   environment:
     ansible_python_interpreter: '/usr/bin/python3'
 
@@ -26,19 +30,32 @@
       regexp: '^127.0.0.1'
       line: '127.0.0.1	{{ website_domain_name }} {{ website_domain_aliases }}'
 
+  # Configure OpenLDAP
+  - name: Debconf
+    debconf:
+      name: 'slapd'
+      question: '{{ item.question }}'
+      value: '{{ item.value }}'
+      vtype: '{{ item.vtype }}'
+    with_items: '{{ openldap_debconfs }}'
   - name: Update APT cache
     apt: 
       update_cache: yes
 
-  - name: Install aptitude for ansible to use
+  - name: Install prerequisites for ansible to use
     apt: 
-      name: ['aptitude', 'python-apt']
+      name: '{{ prerequisite_software_packages }}'
       state: latest
       force_apt_get: yes
  
-  - name: Install Packages
+  - name: Install LAMP software packages
     apt:
-      name: ['apache2', 'libapache2-mod-php', 'mariadb-client', 'mariadb-common', 'mariadb-server', 'default-libmysqlclient-dev', 'php', 'php-mysql', 'php-curl', 'php-mbstring', 'php-xml', 'python3-pip', 'python3-setuptools', 'python3-virtualenv', 'python3-dev', 'python3-mysqldb', 'python3-pymysql']
+      name: '{{ lamp_software_packages }}'
+      state: latest
+
+  - name: Install OpenLDAP software packages
+    apt:
+      name: '{{ openldap_packages }}'
       state: latest
 
   - name: Remove JavaScript-Common package
@@ -46,7 +63,7 @@
       name: javascript-common
       state: absent
 
-  - name: Remove useless packages from the cache
+  - name: Remove unneeded packages from the cache
     apt:
       autoclean: yes
 
@@ -103,6 +120,7 @@
     service:
       name: apache2
       state: started
+      enabled: yes
 
   # MySQL Configuration
   - name: Start MariaDB, if not started
@@ -122,15 +140,15 @@
   # GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'mutillidae';
   - name: Set MariaDB root
     mysql_user:
-      name: root
       login_unix_socket: '/var/run/mysqld/mysqld.sock'
       user: root
       password: '{{ mariadb_root_password }}'
       host_all: yes
       priv: '*.*:ALL,GRANT'
       check_implicit_admin: true
+    no_log: true
 
-  # Set up Mutillidae database
+  # Build Mutillidae MySQL database
   - name: Visit Mutillidae Database Set Up page
     uri:
       url: http://mutillidae.local/set-up-database.php
@@ -138,7 +156,23 @@
     register: this
     failed_when: "'database' not in this.content"
 
-# Copy over the lab files
+  # Import Mutillidae LDAP database
+  - name: Start OpenLDAP, if not started
+    service: 
+      name: slapd
+      state: started
+      enabled: yes
+
+  - name: Copy Mutillidae LDIF file to Temp directory
+    template:
+      src:  '{{ ldap_files_dir }}mutillidae.ldif'
+      dest: '/tmp'
+
+  - name: Upload the Mutillidae LDIF file into the LDAP database
+    command: 'ldapadd -x -D "cn=admin,dc=mutillidae,dc=local" -w mutillidae -H ldap:// -c -f /tmp/mutillidae.ldif'
+    ignore_errors: yes
+
+  # Copy over the lab files
   - name: Copy the lab files into the Documents folder
     copy:
       src: '{{ lab_files_dir }}'

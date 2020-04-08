@@ -1,0 +1,24 @@
+prerequisite_software_packages:
+  - aptitude
+  - python-apt
+
+lamp_software_packages:
+  - apache2
+  - libapache2-mod-php
+  - default-libmysqlclient-dev
+  - php
+  - php-mysql
+  - php-curl
+  - php-mbstring
+  - php-xml
+  - mariadb-client
+  - mariadb-common
+  - mariadb-server
+  - python3-pip
+  - python3-setuptools
+  - python3-virtualenv
+  - python3-dev
+  - python3-mysqldb
+  - python3-pymysql  
+
+linux_password: $6$rounds=656000$SWj/fYk2FUFy0dzf$XdmB7IPjkC1V/UGKkpXcxXKhTJU2nfH3sZB7ppDvUx71pMemnJ/lrsGJYYvg.SaguGs15o7bPM6O2yz2ICflU.
