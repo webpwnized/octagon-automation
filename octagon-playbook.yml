@@ -154,7 +154,7 @@
       url: http://mutillidae.local/set-up-database.php
       return_content: yes
     register: this
-    failed_when: "'database' not in this.content"
+    failed_when: "'The database server appears to be offline' in this.content"
 
   # Import Mutillidae LDAP database
   - name: Start OpenLDAP, if not started
