@@ -4,16 +4,17 @@
   become: true
   vars:
     files_dir: files/
+    vars_dir: vars/
     apache_files_dir: '{{ files_dir }}apache/'
     ldap_files_dir: '{{ files_dir }}ldap/'
     lab_files_dir: '{{ files_dir }}labs/'
     mariadb_files_dir: '{{ files_dir }}mariadb/'
   vars_files: 
-    - vars/kali-variables.yml
-    - vars/apache-variables.yml
-    - vars/mutillidae-variables.yml
-    - vars/mariadb-variables.yml
-    - vars/openldap-variables.yml
+    - '{{ vars_dir }}/kali-variables.yml'
+    - '{{ vars_dir }}//apache-variables.yml'
+    - '{{ vars_dir }}//mutillidae-variables.yml'
+    - '{{ vars_dir }}//mariadb-variables.yml'
+    - '{{ vars_dir }}//openldap-variables.yml'
   environment:
     ansible_python_interpreter: '/usr/bin/python3'
 
