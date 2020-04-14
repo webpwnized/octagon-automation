@@ -11,10 +11,10 @@
     mariadb_files_dir: '{{ files_dir }}mariadb/'
   vars_files: 
     - '{{ vars_dir }}/kali-variables.yml'
-    - '{{ vars_dir }}//apache-variables.yml'
-    - '{{ vars_dir }}//mutillidae-variables.yml'
-    - '{{ vars_dir }}//mariadb-variables.yml'
-    - '{{ vars_dir }}//openldap-variables.yml'
+    - '{{ vars_dir }}/apache-variables.yml'
+    - '{{ vars_dir }}/mutillidae-variables.yml'
+    - '{{ vars_dir }}/mariadb-variables.yml'
+    - '{{ vars_dir }}/openldap-variables.yml'
   environment:
     ansible_python_interpreter: '/usr/bin/python3'
 
@@ -107,6 +107,22 @@
       src: '{{ apache_files_dir }}{{ http_conf }}.j2'
       dest: '/etc/apache2/sites-available/{{ http_conf }}'
     notify: Reload Apache
+
+  - name: Set up Apache error pages directory {{ apache_error_pages_dir }}
+    file: path={{ apache_error_pages_dir }} state=directory
+
+  - name: Set up Apache error pages
+    copy:
+      src: '{{ item.src }}'
+      dest: '{{ item.dest }}'
+      owner:  www-data
+      group:  www-data
+      mode: 0644
+    with_items:
+      - src: '{{ apache_files_dir }}oops.jpg'
+        dest: '{{ apache_error_pages_dir }}oops.jpg'
+      - src: '{{ apache_files_dir }}404.html'
+        dest: '{{ apache_error_pages_dir }}404.html'
 
   - name: Enable Mutillidae site
     shell: '{{ a2ensite }} {{ http_conf }}'

@@ -1,33 +1,40 @@
-    <VirtualHost {{ website_ip_address }}:{{ http_port }}>
-        ServerName {{ website_domain_name }}
-    	ServerAlias {{ website_domain_aliases }}
-        DocumentRoot {{ www_path }}{{ website_name }}
+Alias /{{ error_pages_dir }}404.html {{ www_path }}{{ error_pages_dir }}404.html
+Alias /{{ error_pages_dir }}oops.jpg {{ www_path }}{{ error_pages_dir }}oops.jpg
+
+<VirtualHost {{ website_ip_address }}:{{ http_port }}>
+	ServerName {{ website_domain_name }}
+	ServerAlias {{ website_domain_aliases }}
+	DocumentRoot {{ www_path }}{{ website_name }}
+	ErrorDocument 404 /{{ error_pages_dir }}404.html
+
 	<Directory {{ www_path }}{{ website_name }}>
-                AllowOverride All
-                Options -Indexes +FollowSymLinks +MultiViews
-                Require all granted
+		AllowOverride All
+		Options +Indexes +FollowSymLinks +MultiViews
+		Require all granted
 	</Directory>
 
-    	ErrorLog ${APACHE_LOG_DIR}/{{ website_error_log }}
-    	CustomLog ${APACHE_LOG_DIR}/{{ website_access_log }} combined
-    </VirtualHost>
-    
-    <VirtualHost {{ website_ip_address }}:{{ https_port }}>
-        ServerName {{ website_domain_name }}
-    	ServerAlias {{ website_domain_aliases }}
-        DocumentRoot {{ www_path }}{{ website_name }}
- 	<Directory {{ www_path }}{{ website_name }}>
-                AllowOverride All
-                Options -Indexes +FollowSymLinks +MultiViews
-                Require all granted
+	ErrorLog ${APACHE_LOG_DIR}/{{ website_error_log }}
+	CustomLog ${APACHE_LOG_DIR}/{{ website_access_log }} combined
+</VirtualHost>
+
+<VirtualHost {{ website_ip_address }}:{{ https_port }}>
+	ServerName {{ website_domain_name }}
+	ServerAlias {{ website_domain_aliases }}
+	DocumentRoot {{ www_path }}{{ website_name }}
+	ErrorDocument 404 /{{ error_pages_dir }}404.html
+
+	<Directory {{ www_path }}{{ website_name }}>
+		AllowOverride All
+		Options +Indexes +FollowSymLinks +MultiViews
+		Require all granted
 	</Directory>
 
-    	ErrorLog ${APACHE_LOG_DIR}/{{ website_error_log }}
-    	CustomLog ${APACHE_LOG_DIR}/{{ website_access_log }} combined
-    
-        SSLEngine On
-        SSLOptions +StrictRequire
-        SSLCertificateFile {{ ssl_certs_dir }}{{ ssl_certificate }}
-        SSLCertificateKeyFile {{ ssl_private_key_dir }}{{ ssl_private_key }}
-        SSLProtocol +TLSv1 +TLSv1.1 +TLSv1.2
-    </VirtualHost>
+	ErrorLog ${APACHE_LOG_DIR}/{{ website_error_log }}
+	CustomLog ${APACHE_LOG_DIR}/{{ website_access_log }} combined
+
+	SSLEngine On
+	SSLOptions +StrictRequire
+	SSLCertificateFile {{ ssl_certs_dir }}{{ ssl_certificate }}
+	SSLCertificateKeyFile {{ ssl_private_key_dir }}{{ ssl_private_key }}
+	SSLProtocol +TLSv1 +TLSv1.1 +TLSv1.2
+</VirtualHost>
