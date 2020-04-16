@@ -1,11 +1,19 @@
 a2ensite: '/usr/sbin/a2ensite'
 a2dissite: '/usr/sbin/a2dissite'
+a2enconf: '/usr/sbin/a2enconf'
 http_port: '80'
 https_port: '443'
-www_path: '/var/www/'
-error_pages_dir: 'error-pages/'
 apache_error_pages_dir: '{{ www_path }}{{ error_pages_dir }}'
-ssl_certs_dir: /etc/ssl/certs/
-ssl_private_key_dir: /etc/ssl/private/
 disable_default: true
 
+www_path: '/var/www/'
+error_pages_dir: 'error-pages/'
+
+apache_conf_dir: '/etc/apache2/'
+conf_available_dir: 'conf-available/'
+sites_available_dir: 'sites-available/'
+apache_conf_available_dir: '{{ apache_conf_dir }}{{ conf_available_dir }}'
+apache_sites_available_dir: '{{ apache_conf_dir }}{{ sites_available_dir }}'
+apache_aliases_conf: 'aliases.conf'
+apache_error_pages_conf: 'error-pages.conf'
+default_site_conf: '000-default.conf'

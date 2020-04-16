@@ -5,7 +5,7 @@ website_domain_name: 'mutillidae.local'
 website_domain_aliases: 'www.mutillidae.local mutillidae.com www.mutillidae.com mutillidae.org www.mutillidae.org mutillidae'
 website_access_log: 'mutillidae-access.log'
 website_error_log: 'mutillidae-error.log'
-http_conf: 'apache-mutillidae.conf'
+mutillidae_site_conf: 'mutillidae.conf'
 ssl_certificate: 'mutillidae-selfsigned.crt'
 ssl_private_key: 'mutillidae-selfsigned.key'
 

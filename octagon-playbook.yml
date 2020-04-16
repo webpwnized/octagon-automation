@@ -6,12 +6,14 @@
     files_dir: files/
     vars_dir: vars/
     apache_files_dir: '{{ files_dir }}apache/'
-    ldap_files_dir: '{{ files_dir }}ldap/'
+    https_files_dir: '{{ files_dir }}https/'
     lab_files_dir: '{{ files_dir }}labs/'
+    ldap_files_dir: '{{ files_dir }}ldap/'
     mariadb_files_dir: '{{ files_dir }}mariadb/'
   vars_files: 
     - '{{ vars_dir }}/kali-variables.yml'
     - '{{ vars_dir }}/apache-variables.yml'
+    - '{{ vars_dir }}/https-variables.yml'
     - '{{ vars_dir }}/mutillidae-variables.yml'
     - '{{ vars_dir }}/mariadb-variables.yml'
     - '{{ vars_dir }}/openldap-variables.yml'
@@ -89,10 +91,10 @@
       group:  root
       mode:   '{{ item.mode }}'
     with_items:
-      - src:  '{{ apache_files_dir }}{{ ssl_certificate }}'
+      - src:  '{{ https_files_dir }}{{ ssl_certificate }}'
         dest: '{{ ssl_certs_dir }}{{ ssl_certificate }}'
         mode: '0644'
-      - src:  '{{ apache_files_dir }}{{ ssl_private_key }}'
+      - src:  '{{ https_files_dir }}{{ ssl_private_key }}'
         dest: '{{ ssl_private_key_dir }}{{ ssl_private_key }}'
         mode: '0600'
 
@@ -102,16 +104,35 @@
       name: ssl
     notify: Restart Apache
 
-  - name: Set up Apache virtualhost
-    template:
-      src: '{{ apache_files_dir }}{{ http_conf }}.j2'
-      dest: '/etc/apache2/sites-available/{{ http_conf }}'
+  - name: Set up Apache aliases configuration
+    copy:
+      src: '{{ apache_files_dir }}{{ conf_available_dir }}{{ apache_aliases_conf }}'
+      dest: '{{ apache_conf_available_dir }}{{ apache_aliases_conf }}'
+
+  - name: Enable Apache aliases configuration
+    command: '{{ a2enconf }} aliases'
+
+  - name: Set up default virtualhost on Apache
+    copy:
+      src: '{{ apache_files_dir }}{{ sites_available_dir }}{{ default_site_conf }}'
+      dest: '{{ apache_sites_available_dir }}{{ default_site_conf }}'
     notify: Reload Apache
 
-  - name: Set up Apache error pages directory {{ apache_error_pages_dir }}
+  - name: Set up Mutillidae virtualhost on Apache
+    template:
+      src: '{{ apache_files_dir }}{{ sites_available_dir }}{{ mutillidae_site_conf }}.j2'
+      dest: '{{ apache_sites_available_dir }}{{ mutillidae_site_conf }}'
+    notify: Reload Apache
+
+  - name: Set up Apache error-pages configuration in Apache conf directory
+    copy:
+      src: '{{ apache_files_dir }}{{ apache_error_pages_conf }}'
+      dest: '{{ apache_conf_dir }}{{ apache_error_pages_conf }}'
+
+  - name: Set up Apache error pages directory to hold error pages files 
     file: path={{ apache_error_pages_dir }} state=directory
 
-  - name: Set up Apache error pages
+  - name: Set up Apache error pages in Apache error pages directory
     copy:
       src: '{{ item.src }}'
       dest: '{{ item.dest }}'
@@ -119,18 +140,13 @@
       group:  www-data
       mode: 0644
     with_items:
-      - src: '{{ apache_files_dir }}oops.jpg'
+      - src: '{{ apache_files_dir }}error-pages/oops.jpg'
         dest: '{{ apache_error_pages_dir }}oops.jpg'
-      - src: '{{ apache_files_dir }}404.html'
+      - src: '{{ apache_files_dir }}error-pages/404.html'
         dest: '{{ apache_error_pages_dir }}404.html'
 
   - name: Enable Mutillidae site
-    shell: '{{ a2ensite }} {{ http_conf }}'
-    notify: Reload Apache
-
-  - name: Disable default Apache site
-    shell: '{{ a2dissite }} 000-default.conf'
-    when: disable_default
+    command: '{{ a2ensite }} {{ mutillidae_site_conf }}'
     notify: Reload Apache
 
   - name: Start Apache 2 web service, if not started
@@ -146,7 +162,7 @@
       state: started
       enabled: yes
 
-  - name: Create /root/.my.cnf  with root password credentials
+  - name: Create /root/.my.cnf with root password credentials
     template:
       src:  '{{ mariadb_files_dir }}my.cnf.j2'
       dest: '/root/.my.cnf'
@@ -154,8 +170,7 @@
       mode: 0600
     notify: Restart MariaDB
 
-  # GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY 'mutillidae';
-  - name: Set MariaDB root
+  - name: Grant privileges to MariaDB root account
     mysql_user:
       login_unix_socket: '/var/run/mysqld/mysqld.sock'
       user: root
@@ -166,7 +181,7 @@
     no_log: true
 
   # Build Mutillidae MySQL database
-  - name: Visit Mutillidae Database Set Up page
+  - name: Visit Mutillidae database "Set-Up" page that builds the database
     uri:
       url: http://mutillidae.local/set-up-database.php
       return_content: yes

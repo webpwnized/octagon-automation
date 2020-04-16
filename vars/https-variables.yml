@@ -1,0 +1,3 @@
+ssl_certs_dir: /etc/ssl/certs/
+ssl_private_key_dir: /etc/ssl/private/
+

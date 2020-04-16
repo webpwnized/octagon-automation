@@ -1,11 +1,8 @@
-Alias /{{ error_pages_dir }}404.html {{ www_path }}{{ error_pages_dir }}404.html
-Alias /{{ error_pages_dir }}oops.jpg {{ www_path }}{{ error_pages_dir }}oops.jpg
-
 <VirtualHost {{ website_ip_address }}:{{ http_port }}>
 	ServerName {{ website_domain_name }}
 	ServerAlias {{ website_domain_aliases }}
 	DocumentRoot {{ www_path }}{{ website_name }}
-	ErrorDocument 404 /{{ error_pages_dir }}404.html
+	Include error-pages.conf
 
 	<Directory {{ www_path }}{{ website_name }}>
 		AllowOverride All
@@ -21,7 +18,7 @@ Alias /{{ error_pages_dir }}oops.jpg {{ www_path }}{{ error_pages_dir }}oops.jpg
 	ServerName {{ website_domain_name }}
 	ServerAlias {{ website_domain_aliases }}
 	DocumentRoot {{ www_path }}{{ website_name }}
-	ErrorDocument 404 /{{ error_pages_dir }}404.html
+	Include error-pages.conf
 
 	<Directory {{ www_path }}{{ website_name }}>
 		AllowOverride All
