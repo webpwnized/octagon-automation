@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
       vb.gui = true
       vb.memory = "2048"
       vb.cpus = 2
-      vb.name = "EIS-Kali-Training-Platform-64bit-1.0.10"
+      vb.name = "EIS-Octagon-Training-Platform-64bit-2.0.1"
 
       # Find settings with VBoxManage showvminfo <vmname> or https://www.virtualbox.org/manual/ch08.html under section for modifyvm
       vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
@@ -59,7 +59,6 @@ https://github.com/webpwnized/mutillidae
 
 * Mutillidae Video Tutorials
 https://www.youtube.com/user/webpwnized"]
-
 
   end
 
