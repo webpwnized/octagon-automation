@@ -1,0 +1,36 @@
+1. Update Kali
+
+~/Scripts/update-kali.sh
+
+2. Uninstall javascript-common library
+
+apt-get remove javascript-common
+
+3. Update beef
+
+cd /opt/beef
+./update-beef
+
+4. Update Mutillidae II
+
+cd /var/www/mutillidae
+git pull
+
+5. Delete JTR Pot file
+
+rm ~/.john/john.pot
+
+6. Verify Firefox is not using proxy
+
+7. Clear command history
+
+history -c
+
+8. Erase unneeded files
+
+bleachbit
+
+9. Zero unused disk space
+
+sfill -vfllz /
+
