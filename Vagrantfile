@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
       vb.gui = true
       vb.memory = "2048"
       vb.cpus = 2
-      vb.name = "EIS-Octagon-Training-Platform-64bit-2.0.1"
+      vb.name = "EIS-Octagon-Training-Platform-64bit-2.0.5"
 
       # Find settings with VBoxManage showvminfo <vmname> or https://www.virtualbox.org/manual/ch08.html under section for modifyvm
       vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
