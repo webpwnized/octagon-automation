@@ -18,7 +18,7 @@
 # https://owasp.org/www-project-dependency-check/
  
 # Install new version of OWASP dependency check
-
+# Run the new version to update the database
 # Verify new version of dependency check
 /opt/dependency-check/bin/dependency-check.sh -s /var/www/mutillidae/ -o /tmp/report.html -f HTML
 rm /tmp/report.html
@@ -30,6 +30,7 @@ rm /tmp/report.html
 # Update beef
 # If Beef update or bundler install fails, install the missing gems using "gem install <gem name>"
 # Verify Beef works
+# Set the username and password to beefy in the Beef config.yaml file
 
 # Set the Foxy Proxy Firefox extention to "No Proxy"
 
