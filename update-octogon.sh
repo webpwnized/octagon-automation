@@ -30,6 +30,8 @@ gem update
 # Update Beef
 cd /opt/beef/
 /opt/beef/update-beef
+sed -i 's/user:   "beef"/user:   "beefy"/' /opt/beef/config.yaml
+sed -i 's/passwd: "beef"/passwd: "beefy"/' /opt/beef/config.yaml
 
 # Check if Beef still works
 cd /opt/beef
