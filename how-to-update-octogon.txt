@@ -1,0 +1,42 @@
+
+# Install hydra
+# Update Kali, Ruby Gems, and Beef, delete unneeded files
+# Delete current containers
+# Purge all containers, images, volumes, and the docker system
+# Clone the mutillidae-docker project
+# Build the containers
+# Start the containers
+# Reset the database
+# Load the LDIF file into the LDAP directory
+# Verify the LDAP data is loaded into the LDAP directory server
+# Download a copy of Mutillidae source code to use with OWASP dependency check
+/root/Scripts/update-octagon.sh
+
+# Check if Burp-Suite is up to date
+
+# Check if OWASP dependency check is up to date
+# https://owasp.org/www-project-dependency-check/
+ 
+# Install new version of OWASP dependency check
+
+# Verify new version of dependency check
+/opt/dependency-check/bin/dependency-check.sh -s /var/www/mutillidae/ -o /tmp/report.html -f HTML
+rm /tmp/report.html
+
+# Verify Mutillidae, LDAP, and MySQL works
+
+# Verify Burp-Suite works with Mutillidae
+
+# Update beef
+# If Beef update or bundler install fails, install the missing gems using "gem install <gem name>"
+# Verify Beef works
+
+# Set the Foxy Proxy Firefox extention to "No Proxy"
+
+# Close Firefox and Burp
+
+# Run bleachbit
+
+# Shrink the disk
+
+# Export the VM to an OVA file
